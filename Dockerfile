@@ -13,7 +13,7 @@ RUN apk add --no-cache --virtual build-dependencies git bluez-dev musl-dev make 
 FROM python:${PYTHON}-alpine${ALPINE_VERSION}
 ARG PYTHON
 
-RUN apk add --no-cache tzdata bluez bluez-libs bluez-deprecated
+RUN apk add --no-cache tzdata bluez bluez-libs bluez-deprecated sudo
 
 COPY --from=builder /usr/local/lib/python${PYTHON}/site-packages /usr/local/lib/python${PYTHON}/site-packages
 
