@@ -4,7 +4,7 @@ from workers.base import BaseWorker
 import logger
 
 
-REQUIREMENTS = ["ruuvitag_sensor"]
+REQUIREMENTS = ["git+https://github.com/TheCellule/python-bleson", "ruuvitag_sensor"]
 
 # Supports all attributes of Data Format 2, 3, 4 and 5 of the RuuviTag.
 # See https://github.com/ruuvi/ruuvi-sensor-protocols for the sensor protocols.
