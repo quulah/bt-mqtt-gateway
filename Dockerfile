@@ -1,23 +1,23 @@
-FROM python:3.8-alpine3.11
-
-ENV DEBUG false
-
-RUN mkdir application
-WORKDIR /application
-
-COPY requirements.txt /application
-
-RUN apk add --no-cache tzdata bluez bluez-libs sudo bluez-deprecated && \
-    ln -s /config.yaml ./config.yaml                                 && \
-    pip install -r requirements.txt
+ARG PYTHON="3.8"
+ARG ALPINE_VERSION="3.11"
+FROM python:${PYTHON}-alpine${ALPINE_VERSION} as builder
 
 COPY . /application
 
 RUN apk add --no-cache --virtual build-dependencies git bluez-dev musl-dev make gcc glib-dev musl-dev && \
-    pip install `./gateway.py -r all`                                                                 && \
-    apk del build-dependencies
+    cd /application && \
+    pip install -r requirements.txt && \
+    touch config.yaml && \
+    pip install `./gateway.py -r all`
 
-COPY ./start.sh /start.sh
-RUN chmod +x /start.sh
+FROM python:${PYTHON}-alpine${ALPINE_VERSION}
+ARG PYTHON
 
-ENTRYPOINT ["/bin/sh", "-c", "/start.sh"]
+RUN apk add --no-cache tzdata bluez bluez-libs bluez-deprecated
+
+COPY --from=builder /usr/local/lib/python${PYTHON}/site-packages /usr/local/lib/python${PYTHON}/site-packages
+
+COPY . /application
+WORKDIR /application
+
+ENTRYPOINT ["python3", "/application/gateway.py"]
