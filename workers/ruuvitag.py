@@ -76,11 +76,11 @@ class RuuvitagWorker(BaseWorker):
             "name": self.format_discovery_name(name),
         }
 
-        for _, device_class, unit in ATTR_CONFIG:
+        for attr, device_class, unit in ATTR_CONFIG:
             payload = {
-                "unique_id": self.format_discovery_id(mac, name, device_class),
-                "name": self.format_discovery_name(name, device_class),
-                "state_topic": self.format_prefixed_topic(name, device_class),
+                "unique_id": self.format_discovery_id(mac, name, attr),
+                "name": self.format_discovery_name(name, attr),
+                "state_topic": self.format_prefixed_topic(name, attr),
                 "device": device,
                 "device_class": device_class,
                 "unit_of_measurement": unit,
@@ -88,7 +88,7 @@ class RuuvitagWorker(BaseWorker):
             ret.append(
                 MqttConfigMessage(
                     MqttConfigMessage.SENSOR,
-                    self.format_discovery_topic(mac, name, device_class),
+                    self.format_discovery_topic(mac, name, attr),
                     payload=payload,
                 )
             )
@@ -139,7 +139,7 @@ class RuuvitagWorker(BaseWorker):
             try:
                 ret.append(
                     MqttMessage(
-                        topic=self.format_topic(name, device_class),
+                        topic=self.format_topic(name, attr),
                         payload=values[attr],
                     )
                 )
