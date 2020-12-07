@@ -43,10 +43,12 @@ class MqttClient:
 
     @property
     def client_id(self):
+        import uuid
+
         return (
             self._config["client_id"]
             if "client_id" in self._config
-            else "bt-mqtt-gateway"
+            else f"bt-mqtt-gateway-{mqtt.base62(uuid.uuid4().int, padding=22)}"
         )
 
     @property
